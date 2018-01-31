@@ -86,6 +86,9 @@ t2=tm.time()
 lineartime=0
 stochastictime=0
 nonlineartime=0   
+
+#the outer loop dictates the times at which the system state is sampled.
+#the inner loop represents the actual numerical timestepping of the system.
 for N in range(1,Nmax):
     
     x=state[N-1]
