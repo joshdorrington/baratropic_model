@@ -4,32 +4,31 @@ import math
 import time as tm
 import scipy.sparse as sps
 import pandas as pd
-
-# TEST COMMENT
+from numba import jit
 
 t1=tm.time()
 
 #these functions return the values of certain coefficients in the model
+@jit
 def a(m,b):
     return 8.0*np.sqrt(2)*(m^2)*(b**2 + m**2 -1)/(math.pi*(-1+ 4.0*m**2)*(b**2 + m**2))
 
-
+@jit
 def beta(m,b,B):
     return B*b**2/(b**2 + m**2);
 
-
+@jit
 def gammaprime(m,b,g):
     return g*4*np.sqrt(2)*b*m/((4*(m**2)-1)*math.pi);
 
-              
+@jit         
 def gamma(m,b,g):
     return g*4*np.sqrt(2)*b*(m**3)/((4*(m**2)-1)*math.pi*(b**2 + m**2));
 
-
+@jit
 def d(m,b):
     return 64*np.sqrt(2)*(b**2 - m**2 +1)/(15*math.pi*(b**2 + m**2));
-    
-    
+        
 
 x_init=[0.927796,0.160574,-0.0969953,-0.672758,-0.118184,0.214505] #the initial conditions of the model (these are arbitrary)
 dt=2e-4 #the time step used by the euler maruyama scheme
@@ -91,7 +90,7 @@ nonlineartime=0
 
 #the outer loop dictates the times at which the system state is sampled.
 #the inner loop represents the actual numerical timestepping of the system.
-for N in range(1,Nmax):
+for N in range(1,Nmax+1):
     
     x=state[N-1]
     t4=tm.time() #TIME CHECK
@@ -118,17 +117,17 @@ for N in range(1,Nmax):
     #the value of x and t is recorded after each sample loop
     time[N]=time[N-1]+(t+1)*dt
     state[N]=x
-    print "%.1f %% done" % (100.0*N/Nmax)
+    print("%.1f %% done" % (100.0*N/Nmax))
 
 t3=tm.time()
 #writes data to the names file
 if save:
-    tx=[time,state]
-    filepath='\\Users\\Josh\\Documents\\dphil\\baratropic_python_implementation_test.csv'
+    tx=np.vstack((time[:,None].T,state.T))
+    filepath='testrun1.dat'
     df=pd.DataFrame(tx)
     df.to_csv(filepath)
 
 
-print "Initialisation took %f seconds, the model took %d seconds" % (t2-t1,t3-t2)
-print "Linear calculations took %f seconds, Nonlinear took %f seconds, stochastic took %f seconds" % (lineartime,nonlineartime,stochastictime)
+print("Initialisation took %f seconds, the model took %d seconds" % (t2-t1,t3-t2))
+print("Linear calculations took %f seconds, Nonlinear took %f seconds, stochastic took %f seconds" % (lineartime,nonlineartime,stochastictime))
 
