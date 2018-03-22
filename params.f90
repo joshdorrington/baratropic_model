@@ -11,7 +11,7 @@ module params
 	real(dp), parameter :: pi = 4._dp*ATAN(1._dp)
 	
 	!model timestepping params
-	real(dp), parameter :: dt =0.01_dp
+	real(dp), parameter :: dt =0.0002_dp
 	real(dp), parameter :: t_0=0._dp
 	real(dp), parameter :: t_f=1000._dp
 	real(dp), parameter :: sample_t =1._dp

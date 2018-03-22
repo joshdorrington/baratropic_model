@@ -1,6 +1,6 @@
 
 !Joshua Dorrington 22/03/18 - University of Oxford
-!this module contaons the model equations and integrates
+!this module contains the model equations and integrates
 ! them using a 2nd order Runge Kutta scheme
 module barotropic6d
 	use coeffs 
@@ -43,15 +43,16 @@ module barotropic6d
 			x=init_con
 			
 		!all other steps, sampling at every "samplerate-th" step
-			do i = 1, size(output)-1			
-				do j = 1, stepnum
+			do i = 1, size(output,1)-1			
+				do j = 1, sample_num
 		    			k1 = dt*dxdt(x)
 		    			k2 = dt*dxdt(x + k1)
 
 		    			x = x + 0.5_dp * (k1 + k2)
+
 				end do
 				output(i+1,:)=x
-				print*,(100._dp*(i-1))/size(output), " percent complete"
+				print*,(100._dp*(i-1))/size(output,1), " percent complete"
 			end do
 
 		contains
@@ -61,7 +62,7 @@ module barotropic6d
 				real(dp) :: dxdt(dims)
 
 			!applies linear matrix operator and nonlinear terms
-				dxdt=matmul(lin_op,x)
+				dxdt=matmul(lin_op,x)+C*xf
 				dxdt=dxdt+(/0._dp,&
 				-a1*x(1)*x(3)-d1*x(4)*x(6),&
 				a1*x(1)*x(2)+d1*x(4)*x(5),&
