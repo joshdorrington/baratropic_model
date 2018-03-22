@@ -35,6 +35,6 @@ program barotropic_model
 	print*,"initialisation complete"
 	call run_model(init_con,step_num,sample_num,state_vector,coeff,lin_op)
 	
-	OPEN( 10, FILE=save_file )
-	WRITE(10, *) state_vector   
+	OPEN( 10, FILE=save_file, access="stream")
+	WRITE(10) state_vector   
 end program
