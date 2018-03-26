@@ -11,18 +11,25 @@ module params
 	real(dp), parameter :: pi = 4._dp*ATAN(1._dp)
 	
 	!model timestepping params
-	real(dp), parameter :: dt =0.0002_dp
+	real(dp), parameter :: dt =2e-4_dp
 	real(dp), parameter :: t_0=0._dp
-	real(dp), parameter :: t_f=1000._dp
+	real(dp), parameter :: t_f=10000._dp
 	real(dp), parameter :: sample_t =1._dp
 
-	!derived parameters, don't touch directly
-	integer, parameter :: step_num=int((t_f-t_0)/dt)
-	integer, parameter :: sample_num=int((t_f-t_0)/sample_t)
+		!derived timestepping parameters, don't touch directly
+		integer(kind=int64), parameter :: step_num=(t_f-t_0)/dt
+		integer, parameter :: sample_num=int((t_f-t_0)/sample_t)
 	
-	!model params
+	!model params:
+
+	!strength of stochasticity
+	real(dp), parameter :: sigma =0.001_dp 
+
+	!number of dimensions, and codimensions
 	integer, parameter :: dims=6
 	integer, parameter :: coeff_num =11
+	
+	!array like params, the initial condition and the forcing vector
 	real(dp), parameter, dimension(dims) :: &
 	init_con =(/0.927796_dp,0.160574_dp,-0.0969953_dp,-0.672758_dp,-0.118184_dp,0.214505_dp/)
 	real(dp), parameter, dimension(dims) :: &
@@ -37,7 +44,6 @@ module params
 	!topographical height parameter
 	real(dp), parameter :: g=0.2_dp
 	
-	!I/O parameters
-	character (len=9) :: save_file="state.out"
+	
 
 end module params

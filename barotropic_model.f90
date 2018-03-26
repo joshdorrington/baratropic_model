@@ -14,7 +14,7 @@ program barotropic_model
 	use, intrinsic :: iso_fortran_env
 	use params
 	use coeffs, only: get_coeffs, build_lin_op
-	use utils, only: time_seed, white_noise
+	use utils, only: time_seed
 	use barotropic6d, only: run_model
 	implicit none
 	
@@ -23,6 +23,13 @@ program barotropic_model
 	real(dp), dimension(sample_num,dims) :: state_vector
 	real(dp), dimension(coeff_num) :: coeff
 	real(dp), dimension(dims,dims) :: lin_op
+	integer :: inner_loop_size
+
+!	!I/O details
+	character (len=1024) :: save_file
+	WRITE(save_file,"(A13,E8.2,A4)") "results/sigma", sigma, ".out"
+	
+	inner_loop_size=step_num/sample_num
 	
 	!Seed random numbers
 	call time_seed()
@@ -31,10 +38,11 @@ program barotropic_model
 	call get_coeffs(b,beta,g,coeff)
 	call build_lin_op(lin_op,coeff)
 	
-
+	!Run the simulation
 	print*,"initialisation complete"
-	call run_model(init_con,step_num,sample_num,state_vector,coeff,lin_op)
+	call run_model(init_con,step_num,sample_num,state_vector,coeff,lin_op,inner_loop_size)
 	
+	!Write data to file
 	OPEN( 10, FILE=save_file, access="stream")
 	WRITE(10) state_vector   
 end program

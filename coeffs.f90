@@ -22,7 +22,7 @@ module coeffs
 		coeff_arr(5)=gamma_coeff(1,b,g)
 		coeff_arr(6)=gamma_coeff(2,b,g)
 		coeff_arr(7)=gamma_prime_coeff(1,b,g)
-		coeff_arr(8)=gamma_prime_coeff(1,b,g)
+		coeff_arr(8)=gamma_prime_coeff(2,b,g)
 		coeff_arr(9)=d_coeff(1,b)
 		coeff_arr(10)=d_coeff(2,b)
 		coeff_arr(11)=16._dp*sqrt(2._dp)/(5._dp*pi)
@@ -51,6 +51,7 @@ module coeffs
 		mat(5,6)=coeff(4)
 		mat(6,4)=-coeff(6)
 		mat(6,5)=-coeff(4)
+	   	
 
 	    end subroutine build_lin_op
 
@@ -58,14 +59,14 @@ module coeffs
 	    	integer, intent(in) :: m
 		real(dp), intent(in) :: b
 	    	real(dp) :: a
-	    	a=8._dp*sqrt(2._dp)*(m**2)*(b**2+m**2-1)/(pi*(-1._dp +4._dp*m**2)*(b**2+m**2))
+	    	a=8._dp*sqrt(2._dp)*(m**2)*(b**2+(m**2)-1)/(pi*(-1 +4*(m**2))*(b**2+m**2))
 	    end function a_coeff
 
 	    function beta_coeff(m,b,beta) result(output)
 	    	integer, intent(in) :: m
 		real(dp), intent(in) :: beta, b
 	    	real(dp) :: output
-	    	output=beta*b**2/(b**2 + m**2)
+	    	output=beta*(b**2)/(b**2 + m**2)
 	    end function beta_coeff
 
 	    function gamma_coeff(m,b,g) result(gamma_)
@@ -86,7 +87,7 @@ module coeffs
 		integer, intent(in) :: m
 		real(dp), intent(in) :: b
 		real(dp) :: d
-		d=(64._dp*sqrt(2._dp)*(b**2-m**2 + 1))/(15._dp*pi*(b**2 + m**2))
+		d=(64._dp*sqrt(2._dp)*(b**2-(m**2) + 1))/(15._dp*pi*(b**2 + m**2))
 	    end function d_coeff
 
 	   

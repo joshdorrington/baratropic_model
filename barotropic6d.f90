@@ -1,30 +1,33 @@
 
 !Joshua Dorrington 22/03/18 - University of Oxford
 !this module contains the model equations and integrates
-! them using a 2nd order Runge Kutta scheme
+! them using a first order Euler Maruyama scheme
+
 module barotropic6d
 	use coeffs 
 	use params
-
+	use utils, only: white_noise
 	implicit none
     	private
 	public run_model
 
 
 	contains
-		subroutine run_model(init_con,stepnum,samplenum,output, coeff,lin_op)
+		subroutine run_model(init_con,stepnum,samplenum,output, coeff,lin_op,n_inner)
 
-			integer, intent(in) :: stepnum
-			integer, intent(in) :: samplenum
+			integer(kind=int64), intent(in) :: stepnum
+			integer, intent(in) :: samplenum, n_inner
 			real(dp), intent(in) :: init_con(dims)
 			real(dp), dimension(samplenum, dims) :: output
 			real(dp), dimension(dims) :: k1, k2,x
 			real(dp),intent(in), dimension(coeff_num) :: coeff
 			real(dp), intent(in), dimension(dims,dims) :: lin_op
-			integer :: i,j
+			integer :: i, j
+			real(dp), dimension(n_inner,dims) :: stoch_arr
 			real(dp) :: a1,a2,beta1,beta2,gamma1,gamma2,gammaprime1, &
 				    gammaprime2, d1, d2, e
 			
+			!Unpacks the model coefficients
 			a1=coeff(1)
 			a2=coeff(2)
 			beta1=coeff(3)
@@ -37,32 +40,37 @@ module barotropic6d
 			d2=coeff(10)
 			e=coeff(11)
 			
-
 			! First step
 	       		output(1,:) = init_con
 			x=init_con
 			
-		!all other steps, sampling at every "samplerate-th" step
-			do i = 1, size(output,1)-1			
-				do j = 1, sample_num
+			!all other steps, sampling at end of inner loop
+			do i = 1, size(output,1)-1
+				
+				!generate random numbers for next inner loop
+				call white_noise(stoch_arr,0._dp,sqrt(dt),n_inner)
+				do j = 1, n_inner
 		    			k1 = dt*dxdt(x)
-		    			k2 = dt*dxdt(x + k1)
+		    			!k2 = dt*dxdt(x + k1)
 
-		    			x = x + 0.5_dp * (k1 + k2)
-
+		    			!x = x + 0.5_dp * (k1 + k2)
+					x=x+k1+sigma*stoch_arr(j,:)
 				end do
 				output(i+1,:)=x
-				print*,(100._dp*(i-1))/size(output,1), " percent complete"
+				!print*,(100._dp*(i-1))/size(output,1), " percent complete"
 			end do
 
 		contains
+
+			!The o.d.e is here
 			function dxdt(x)
 			
 				real(dp),intent(in) :: x(dims)
 				real(dp) :: dxdt(dims)
 
-			!applies linear matrix operator and nonlinear terms
+				!applies linear matrix operator
 				dxdt=matmul(lin_op,x)+C*xf
+				!adds non linear terms
 				dxdt=dxdt+(/0._dp,&
 				-a1*x(1)*x(3)-d1*x(4)*x(6),&
 				a1*x(1)*x(2)+d1*x(4)*x(5),&
