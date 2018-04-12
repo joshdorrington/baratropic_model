@@ -3,7 +3,7 @@
 
 !This model solves a 6d spectral truncation of a baratropic beta plane model as
 ! first presented in [Charney & DeVore 1979] 
-!https://doi.org/10.1175/1520-0469(1979)036<1205:MFEITA>2.0.CO;2
+
 
 !all model parameters are in params
 !formulas for all spectral coefficients are in coeffs
@@ -25,12 +25,10 @@ program barotropic_model
 	real(dp), dimension(dims,dims) :: lin_op
 	integer :: inner_loop_size
 
-!	!I/O details
-	character (len=1024) :: save_file
-	WRITE(save_file,"(A13,E8.2,A4)") "results/sigma", sigma, ".out"
+ 
 	
 	inner_loop_size=step_num/sample_num
-	
+
 	!Seed random numbers
 	call time_seed()
 
@@ -39,7 +37,6 @@ program barotropic_model
 	call build_lin_op(lin_op,coeff)
 	
 	!Run the simulation
-	print*,"initialisation complete"
 	call run_model(init_con,step_num,sample_num,state_vector,coeff,lin_op,inner_loop_size)
 	
 	!Write data to file

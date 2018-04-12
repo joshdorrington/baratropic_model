@@ -13,7 +13,7 @@ module params
 	!model timestepping params
 	real(dp), parameter :: dt =2e-4_dp
 	real(dp), parameter :: t_0=0._dp
-	real(dp), parameter :: t_f=10000._dp
+	real(dp), parameter :: t_f=200000._dp
 	real(dp), parameter :: sample_t =1._dp
 
 		!derived timestepping parameters, don't touch directly
@@ -21,10 +21,13 @@ module params
 		integer, parameter :: sample_num=int((t_f-t_0)/sample_t)
 	
 	!model params:
-
+	character(len=1024), parameter :: save_file = SUB_SAVE_FILE
 	!strength of stochasticity
-	real(dp), parameter :: sigma =0.001_dp 
-
+	real(dp), parameter :: sigma = SUB_SIGMA
+	!noise type, "w"=white noise, "r" = red noise
+	character, parameter :: noise_type=SUB_NOISE_TYPE
+	!correlation of noise (only for noise type ='r')
+	real(dp), parameter :: r=SUB_R
 	!number of dimensions, and codimensions
 	integer, parameter :: dims=6
 	integer, parameter :: coeff_num =11

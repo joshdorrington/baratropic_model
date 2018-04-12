@@ -7,7 +7,7 @@ module utils
 	use params
 	implicit none
 	private
-	public time_seed, white_noise
+	public time_seed, white_noise, red_noise
 	   
 	contains
 		!lifted wholesale from Sam Hatfield's Lorenz63-4D Var model
@@ -45,12 +45,12 @@ module utils
 		end subroutine
 
 		!generates (n X dims) array of red noise with lag 1 correlation r
-		subroutine red_noise(r,rand_arr, mean,std,n)
+		subroutine red_noise(rand_arr, mean,std,n)
 			real(dp) :: rand_arr(:,:), white_arr(n,dims)
-			real(dp), intent(in) :: mean, std,r
+			real(dp), intent(in) :: mean, std
 			integer , intent(in):: n
-			integer :: k, i
-			
+			integer :: i
+			real(dp) :: k
 			k=sqrt(1-r*r)
 			call white_noise(white_arr,mean,std,n)
 			rand_arr(1,:)=white_arr(1,:)

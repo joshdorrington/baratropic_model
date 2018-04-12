@@ -6,7 +6,7 @@
 module barotropic6d
 	use coeffs 
 	use params
-	use utils, only: white_noise
+	use utils, only: white_noise, red_noise
 	implicit none
     	private
 	public run_model
@@ -48,7 +48,12 @@ module barotropic6d
 			do i = 1, size(output,1)-1
 				
 				!generate random numbers for next inner loop
-				call white_noise(stoch_arr,0._dp,sqrt(dt),n_inner)
+				if (noise_type=="w") then
+					call white_noise(stoch_arr,0._dp,sqrt(dt),n_inner)
+				else if (noise_type=="r") then
+					call red_noise(stoch_arr,0._dp,sqrt(dt),n_inner)
+				end if
+
 				do j = 1, n_inner
 		    			k1 = dt*dxdt(x)
 		    			!k2 = dt*dxdt(x + k1)
