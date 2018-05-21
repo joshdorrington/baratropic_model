@@ -1,0 +1,29 @@
+
+	#these values will be spliced into the fortran code:
+	filename=\"results/determ9d.out\"
+	sigma=0
+	r=0
+	noise_type=\"w\"
+
+	echo $filename
+	#splicing into parameter file
+	sed "s|SUB_SIGMA|$sigma|;s|SUB_NOISE_TYPE|$noise_type|;s|SUB_R|$r|;s|SUB_SAVE_FILE|$filename|" params9d.f90 > params.determ.f90
+
+	#compiling and executing, each labelled differently for parallelising
+	gfortran -o baro_exe -O3 params.determ.f90 coeffs9d.f90 utils9d.f90 barotropic9d.f90 barotropic_model9d.f90
+	./baro_exe &
+
+	echo executing with sigma = $s_val ,saving in $filename
+	let N=N+1
+	echo $N processes running
+
+	#starts processes until all cores are in use
+	if test $N -eq $core_num
+	then
+		N=0
+		echo full process number reached
+		time wait
+		fi
+
+
+rm baro_exe*
