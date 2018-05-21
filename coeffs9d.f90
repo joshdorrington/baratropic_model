@@ -89,9 +89,9 @@ module coeffs
 
           mat(8,9)=coeff(9)!beta_3
 
-          mat(9,7)=-coeff(9)!-beta_3
+          mat(9,8)=-coeff(9)!-beta_3
           mat(9,1)=coeff(17)!gamma_dagger_3
-          mat(9,4)=-coeff(12)!-gamma_3
+          mat(9,7)=-coeff(12)!-gamma_3
 	    end subroutine build_lin_op
 !THE ALPHA FUNCS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	    function a_coeff(m,b) result(a)
