@@ -1,0 +1,51 @@
+
+##This script runs in parallel a deterministic ensemble of the 10D barotropic model
+
+#get number of cores
+core_num=$(nproc --all)
+
+#counter for loop
+N=0
+
+#Non-looping variables to be spliced into fortran code:
+sigma=0._dp
+r=0._dp
+noise_type=\"d\"
+init_mode=\"d\"
+
+#Looping variables:
+Ensemble_Members=$(seq 1 1 1)
+
+for member in $Ensemble_Members;
+do
+
+		#set looping variables:
+		filename=\"//data/dorrington/dphil/yr1/trm3/Barotropic10D/results/determ_${member}.out\"
+
+
+		echo $filename
+
+		#splice all variables into parameter file
+		sed "s|SUB_SIGMA|$sigma|;s|SUB_NOISE_TYPE|$noise_type|;s|SUB_R|"$r"|;s|SUB_INIT_MODE|$init_mode|;s|SUB_SAVE_FILE|$filename|" params.f90 > params.temp$N.f90
+
+		#compiling and executing, each labelled differently for parallelising
+		gfortran -o baro_exe$N -O3 params.temp$N.f90 coeffs10d.f90 utils.f90 barotropic10d.f90 main.f90
+		./baro_exe$N &
+
+		echo executing ensemble member $member , saving in $filename
+		let N=N+1
+		echo $N processes running
+
+		#starts processes until all cores are in use
+		if test $N -eq $core_num
+		then
+			N=0
+			echo full process number reached
+			time wait
+		fi
+
+done
+
+#clean up old files
+rm params.temp*
+rm baro_exe*
