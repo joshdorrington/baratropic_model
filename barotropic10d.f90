@@ -111,9 +111,9 @@ module barotropic10d
 				 -a2*x(1)*x(6) -d2*x(3)*x(4) +toggle*(p2*(x(2)*x(8)-x(3)*x(7))),  & !x5
 				  a2*x(1)*x(5) +d2*x(2)*x(4) +toggle*(-p2*(x(2)*x(7)+x(3)*x(8))),  & !x6
 				 toggle*(-a3*x(1)*x(8) -d3*x(4)*x(10)-p3*(x(2)*x(6)+x(3)*x(5))),  & !x7
-					toggle*(a3*x(1)*x(7) +d3*x(4)*x(9) +p3*(x(2)*x(5)-x(3)*x(6))),  & !x8
+				 toggle*(a3*x(1)*x(7) +d3*x(4)*x(9) +p3*(x(2)*x(5)-x(3)*x(6))),  & !x8
 				 toggle*(-a4*x(1)*x(10)-d4*x(4)*x(8)), & !x9
-					toggle*(a4*x(1)*x(9) +d4*x(4)*x(7))/) !x10
+				 toggle*(a4*x(1)*x(9) +d4*x(4)*x(7))/) !x10
 
 
 			end function dxdt
